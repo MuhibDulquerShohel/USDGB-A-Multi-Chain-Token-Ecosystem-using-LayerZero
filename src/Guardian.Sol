@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+
+interface IPausable {
+    function pause() external;
+    function unpause() external;
+}
+
+contract Guardian is AccessControl {
+    // ROLES
+    bytes32 public constant EXECUTIVE_ADMIN_ROLE =
+        keccak256("EXECUTIVE_ADMIN_ROLE"); // Multisig
+    bytes32 public constant RISK_MANAGER_ROLE = keccak256("RISK_MANAGER_ROLE"); // AI Bot / Security Firm
+
+    // TARGETS (Contracts the Guardian watches)
+    IPausable public mintingContract;
+    IPausable public lpRewardPool;
+    IPausable public certificateStaking;
+    IPausable public goldBonusVault;
+
+    // EVENTS
+    event EmergencyGlobalPause(address indexed triggeredBy);
+    event OperationsRestored(address indexed triggeredBy);
+
+    constructor(
+        address _multisig,
+        address _riskBot,
+        address _minting,
+        address _lpRewardPool,
+        address _certStaking,
+        address _bonusVault
+    ) {
+        _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
+        _grantRole(EXECUTIVE_ADMIN_ROLE, _multisig);
+        _grantRole(RISK_MANAGER_ROLE, _riskBot);
+
+        mintingContract = IPausable(_minting);
+        lpRewardPool = IPausable(_lpRewardPool);
+        certificateStaking = IPausable(_certStaking);
+        goldBonusVault = IPausable(_bonusVault);
+    }
+
+    /**
+     * @notice THE EMERGENCY BRAKE
+     * @dev Can be called by the AI Bot (Risk Manager) or the Multisig.
+     * Pauses EVERYTHING: Minting, Staking, Withdrawals.
+     */
+    function emergencyGlobalPause() external {
+        require(
+            hasRole(RISK_MANAGER_ROLE, msg.sender) ||
+                hasRole(EXECUTIVE_ADMIN_ROLE, msg.sender),
+            "Not authorized"
+        );
+
+        // Try to pause each. We use try/catch to ensure one failure doesn't stop the rest.
+        try mintingContract.pause() {} catch {}
+        try lpRewardPool.pause() {} catch {}
+        try certificateStaking.pause() {} catch {}
+        try goldBonusVault.pause() {} catch {}
+        emit EmergencyGlobalPause(msg.sender);
+    }
+
+    /**
+     * @notice RESTORE OPERATIONS
+     * @dev Can ONLY be called by the Executive Admin (Multisig).
+     * The AI Bot cannot unpause; only humans can.
+     */
+    function restoreOperations() external onlyRole(EXECUTIVE_ADMIN_ROLE) {
+        try mintingContract.unpause() {} catch {}
+        try lpRewardPool.unpause() {} catch {}
+        try certificateStaking.unpause() {} catch {}
+        try goldBonusVault.unpause() {} catch {}
+        emit OperationsRestored(msg.sender);
+    }
+
+    // --- Configuration ---
+    function updateTargets(
+        address _minting,
+        address _lpPool,
+        address _certStaking,
+        address _bonusVault
+    ) external onlyRole(EXECUTIVE_ADMIN_ROLE) {
+        mintingContract = IPausable(_minting);
+        lpRewardPool = IPausable(_lpPool);
+        certificateStaking = IPausable(_certStaking);
+        goldBonusVault = IPausable(_bonusVault);
+    }
+}
