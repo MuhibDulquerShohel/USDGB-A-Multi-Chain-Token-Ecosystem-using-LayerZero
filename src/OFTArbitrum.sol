@@ -26,19 +26,6 @@ contract GOLDBACKBONDArbitrum is OFT, AccessControl {
         isHomeChain = _isHomeChain;
     }
 
-    // function grantMinterRole(address minter) external onlyRole(ADMIN_ROLE) {
-    //     _grantRole(MINTER_ROLE, minter);
-    // }
-    // function revokeMinterRole(address minter) external onlyRole(ADMIN_ROLE) {
-    //     _revokeRole(MINTER_ROLE, minter);
-    // }
-    // function grantBurnerRole(address burner) external onlyRole(ADMIN_ROLE) {
-    //     _grantRole(BURNER_ROLE, burner);
-    // }
-    // function revokeBurnerRole(address burner) external onlyRole(ADMIN_ROLE) {
-    //     _revokeRole(BURNER_ROLE, burner);
-    // }
-
     function transferOwnership(address newOwner) public override onlyOwner {
         super.transferOwnership(newOwner);
         _grantRole(DEFAULT_ADMIN_ROLE, newOwner);

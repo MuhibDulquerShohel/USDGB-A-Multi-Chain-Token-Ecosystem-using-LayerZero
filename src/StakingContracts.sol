@@ -274,7 +274,6 @@ contract CertificateStaking is AccessControl, Pausable, ReentrancyGuard {
     }
 
     mapping(address => Stake) public userStakes;
-    // mapping(address => bool) public approvedLenders;
 
     constructor(address _gbbToken, address _admin) {
         GBB_TOKEN = IGOLDBACKBOND(_gbbToken);
@@ -318,16 +317,6 @@ contract CertificateStaking is AccessControl, Pausable, ReentrancyGuard {
         return (false, 0);
     }
 
-    // --- Admin / Guardian ---
-    // function addLender(address lender) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    //     approvedLenders[lender] = true;
-    // }
-
-    // function removeLender(
-    //     address lender
-    // ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    //     approvedLenders[lender] = false;
-    // }
 
     function pause() external onlyRole(PAUSER_ROLE) {
         _pause();
