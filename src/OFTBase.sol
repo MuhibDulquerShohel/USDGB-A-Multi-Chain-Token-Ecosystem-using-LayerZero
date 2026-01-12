@@ -9,11 +9,12 @@ contract GOLDBACKBONDBase is OFT, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-
+    //Max supply per chain is 250,560,000,000 USDGB
     uint256 public constant MAX_SUPPLY = 250_560_000_000 * (10 ** 18);
-
+    bool public immutable isHomeChain;
     constructor(
-        address _lzEndpoint
+        address _lzEndpoint,
+        bool _isHomeChain
     )
         OFT("GOLDBACKBOND", "USDGB", _lzEndpoint, msg.sender)
         AccessControl()
@@ -21,19 +22,34 @@ contract GOLDBACKBONDBase is OFT, AccessControl {
     {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ADMIN_ROLE, msg.sender);
+        isHomeChain = _isHomeChain;
     }
 
-    function grantMinterRole(address minter) external onlyRole(ADMIN_ROLE) {
-        _grantRole(MINTER_ROLE, minter);
+    // function grantMinterRole(address minter) external onlyRole(ADMIN_ROLE) {
+    //     _grantRole(MINTER_ROLE, minter);
+    // }
+    // function revokeMinterRole(address minter) external onlyRole(ADMIN_ROLE) {
+    //     _revokeRole(MINTER_ROLE, minter);
+    // }
+    // function grantBurnerRole(address burner) external onlyRole(ADMIN_ROLE) {
+    //     _grantRole(BURNER_ROLE, burner);
+    // }
+    // function revokeBurnerRole(address burner) external onlyRole(ADMIN_ROLE) {
+    //     _revokeRole(BURNER_ROLE, burner);
+    // }
+
+    function transferOwnership(address newOwner) public override onlyOwner {
+        super.transferOwnership(newOwner);
+        _grantRole(DEFAULT_ADMIN_ROLE, newOwner);
+        _revokeRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
-    function revokeMinterRole(address minter) external onlyRole(ADMIN_ROLE) {
-        _revokeRole(MINTER_ROLE, minter);
-    }
-    function grantBurnerRole(address burner) external onlyRole(ADMIN_ROLE) {
-        _grantRole(BURNER_ROLE, burner);
-    }
-    function revokeBurnerRole(address burner) external onlyRole(ADMIN_ROLE) {
-        _revokeRole(BURNER_ROLE, burner);
+
+    function grantRole(bytes32 role, address account) public override onlyRole(getRoleAdmin(role)) {
+        if(role == DEFAULT_ADMIN_ROLE) {
+            transferOwnership(account);
+            return;
+        }
+        _grantRole(role, account);
     }
 
     // --- PATCH: Added withdrawEther (from Slither report) and nonReentrant modifier ---
@@ -45,6 +61,7 @@ contract GOLDBACKBONDBase is OFT, AccessControl {
     }
 
     function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
+        require(isHomeChain, "OFT: Manual minting restricted to Home Chain");
         require(
             totalSupply() + amount <= MAX_SUPPLY,
             "GOLDBACKBOND: Max supply exceeded"

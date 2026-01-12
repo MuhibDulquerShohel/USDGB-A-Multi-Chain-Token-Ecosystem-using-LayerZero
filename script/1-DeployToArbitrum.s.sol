@@ -8,7 +8,7 @@ contract DeployOApp is Script {
     function run() external {
         console.log("HyperEVM deployment script started, please wait.....");
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
-        GOLDBACKBONDArbitrum usdgb = new GOLDBACKBONDArbitrum(0x6EDCE65403992e310A62460808c4b910D972f10f);
+        GOLDBACKBONDArbitrum usdgb = new GOLDBACKBONDArbitrum(0x6EDCE65403992e310A62460808c4b910D972f10f, false);
         vm.stopBroadcast();
 
         console.log("GOLDBACKBOND HyperEVM version deployed to:", address(usdgb));

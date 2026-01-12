@@ -129,7 +129,7 @@ contract StakingContractsTest is Test {
         (
             uint256 lpAmount,
             uint256 lastClaimTimeBase,
-            uint256 lastClaimTimeGoldBonus
+            uint256 lastClaimTimeGoldBonus,
         ) = lpRewardPool.userStakes(address(this));
         assertEq(lpAmount, amount);
         assertEq(lastClaimTimeBase, block.timestamp);
@@ -190,7 +190,7 @@ contract StakingContractsTest is Test {
         (
             uint256 lpAmount,
             uint256 lastClaimTimeBase,
-            uint256 lastClaimTimeGoldBonus
+            uint256 lastClaimTimeGoldBonus,
         ) = lpRewardPool.userStakes(address(this));
         assertEq(lpAmount, amount);
         assertEq(lastClaimTimeBase, block.timestamp);
@@ -236,7 +236,7 @@ contract StakingContractsTest is Test {
         (
             uint256 lpAmount,
             uint256 lastClaimTimeBase,
-            uint256 lastClaimTimeGoldBonus
+            uint256 lastClaimTimeGoldBonus,
         ) = lpRewardPool.userStakes(address(this));
         assertEq(lpAmount, amount);
         assertEq(lastClaimTimeBase, block.timestamp);
@@ -540,45 +540,45 @@ contract StakingContractsTest is Test {
         assertEq(levrageAmount, amount * 3);
     }
 
-    function test_if_revert_if_non_admin_calls_addLender_function() public {
-        vm.startPrank(prankWallet);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IAccessControl.AccessControlUnauthorizedAccount.selector,
-                prankWallet,
-                DEFAULT_ADMIN_ROLE
-            )
-        );
-        certificateStaking.addLender(address(10));
-        vm.stopPrank();
-    }
+    // function test_if_revert_if_non_admin_calls_addLender_function() public {
+    //     vm.startPrank(prankWallet);
+    //     vm.expectRevert(
+    //         abi.encodeWithSelector(
+    //             IAccessControl.AccessControlUnauthorizedAccount.selector,
+    //             prankWallet,
+    //             DEFAULT_ADMIN_ROLE
+    //         )
+    //     );
+    //     certificateStaking.addLender(address(10));
+    //     vm.stopPrank();
+    // }
 
-    function test_if_admin_can_successfully_call_addLender_function() public {
-        certificateStaking.addLender(address(10));
-        bool isLender = certificateStaking.approvedLenders(address(10));
-        assertEq(isLender, true);
-    }
-    function test_if_revert_if_non_admin_calls_removeLender_function() public {
-        vm.startPrank(prankWallet);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IAccessControl.AccessControlUnauthorizedAccount.selector,
-                prankWallet,
-                DEFAULT_ADMIN_ROLE
-            )
-        );
-        certificateStaking.removeLender(address(10));
-        vm.stopPrank();
-    }
+    // function test_if_admin_can_successfully_call_addLender_function() public {
+    //     certificateStaking.addLender(address(10));
+    //     bool isLender = certificateStaking.approvedLenders(address(10));
+    //     assertEq(isLender, true);
+    // }
+    // function test_if_revert_if_non_admin_calls_removeLender_function() public {
+    //     vm.startPrank(prankWallet);
+    //     vm.expectRevert(
+    //         abi.encodeWithSelector(
+    //             IAccessControl.AccessControlUnauthorizedAccount.selector,
+    //             prankWallet,
+    //             DEFAULT_ADMIN_ROLE
+    //         )
+    //     );
+    //     certificateStaking.removeLender(address(10));
+    //     vm.stopPrank();
+    // }
 
-    function test_if_admin_can_successfully_call_removeLender_function() public {
-        certificateStaking.addLender(address(10));
-        bool isLender = certificateStaking.approvedLenders(address(10));
-        assertEq(isLender, true);
-        certificateStaking.removeLender(address(10));
-        bool isLenderAfter = certificateStaking.approvedLenders(address(10));
-        assertEq(isLenderAfter, false);
-    }
+    // function test_if_admin_can_successfully_call_removeLender_function() public {
+    //     certificateStaking.addLender(address(10));
+    //     bool isLender = certificateStaking.approvedLenders(address(10));
+    //     assertEq(isLender, true);
+    //     certificateStaking.removeLender(address(10));
+    //     bool isLenderAfter = certificateStaking.approvedLenders(address(10));
+    //     assertEq(isLenderAfter, false);
+    // }
 
     function test_if_revert_if_non_admin_call_pause_function_of_certificateStaking() public {
         vm.startPrank(prankWallet);

@@ -8,7 +8,7 @@ contract DeployOApp is Script {
     function run() external {
         console.log("EVM deployment script started, please wait.....");
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
-        GOLDBACKBONDBase usdgb = new GOLDBACKBONDBase(0x6EDCE65403992e310A62460808c4b910D972f10f);
+        GOLDBACKBONDBase usdgb = new GOLDBACKBONDBase(0x6EDCE65403992e310A62460808c4b910D972f10f, true);
         vm.stopBroadcast();
 
         console.log("GOLDBACKBOND EVM version deployed to:", address(usdgb));

@@ -56,7 +56,7 @@ contract USDGBMinting is AccessControl, Pausable {
         address to,
         uint256 amount
     ) external onlyRole(MINTER_ROLE) whenNotPaused {
-        require(amount < hardLimit, "Exceeds Hard Limit");
+        require(amount <= hardLimit, "Exceeds Hard Limit");
 
         // Green Lane
         if (amount <= softLimit) {
@@ -80,6 +80,7 @@ contract USDGBMinting is AccessControl, Pausable {
         uint256 txId
     ) external onlyRole(COMPLIANCE_ADMIN) {
         PendingTx storage request = complianceQueue[txId];
+        require(request.timestamp != 0, "Tx does not exist");
         require(!request.processed, "Processed");
         request.processed = true;
         usdgb.mint(request.user, request.amount);
@@ -91,6 +92,7 @@ contract USDGBMinting is AccessControl, Pausable {
         string memory reason
     ) external onlyRole(COMPLIANCE_ADMIN) {
         PendingTx storage request = complianceQueue[txId];
+        require(request.timestamp != 0, "Tx does not exist");
         require(!request.processed, "Processed");
         request.processed = true;
         emit TransactionRejected(txId, reason);
@@ -101,6 +103,8 @@ contract USDGBMinting is AccessControl, Pausable {
         uint256 _soft,
         uint256 _hard
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(_soft <= _hard, "Soft limit cannot exceed hard limit");
+
         softLimit = _soft;
         hardLimit = _hard;
         emit LimitsUpdated(_soft, _hard);

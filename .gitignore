@@ -12,3 +12,6 @@ docs/
 lib/
 # Dotenv file
 .env
+lib/
+cache/
+out/
