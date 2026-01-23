@@ -51,5 +51,5 @@ contract SendOFT is Script {
     }
 }
 
-//forge script script/2-SendOFTSepoliaToHyper.s.sol --fork-url https://sepolia.infura.io/v3/485193a87ef74e4e92cb3bf5c20a396f --broadcast
-//forge script script/2-SendOFTSepoliaToArbitrum.s.sol --fork-url https://base-sepolia.infura.io/v3/485193a87ef74e4e92cb3bf5c20a396f --broadcast
+//forge script script/2-SendOFTSepoliaToHyper.s.sol --fork-url  --broadcast
+//forge script script/2-SendOFTSepoliaToArbitrum.s.sol --fork-url  --broadcast

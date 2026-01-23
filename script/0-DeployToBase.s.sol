@@ -15,5 +15,5 @@ contract DeployOApp is Script {
     }
 }
 //forge script script/DeployToEVM.s.sol --fork-url "put your rpc url here" --broadcast --verify
-//forge script script/0-DeployToEVM.s.sol --fork-url https://sepolia.infura.io/v3/485193a87ef74e4e92cb3bf5c20a396f --broadcast --verify
-//forge create src/OFTEthereum.sol:GOLDBACKBOND --rpc-url https://sepolia.infura.io/v3/485193a87ef74e4e92cb3bf5c20a396f --private-key 0xe3a9d5274a4b52b24e29e54f629b1e0e913943b1ec6d38c87011b1283cd82b65
+//forge script script/0-DeployToEVM.s.sol --fork-url  --broadcast --verify
+//forge create src/OFTEthereum.sol:GOLDBACKBOND --rpc-url  --private-key 
